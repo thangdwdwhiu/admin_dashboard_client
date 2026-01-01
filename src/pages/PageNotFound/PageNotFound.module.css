@@ -1,0 +1,112 @@
+
+.wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 10% 10%, #0f1724 0%, #071023 30%, #001029 100%);
+  color: #e6f0ff;
+  position: relative;
+  padding: 40px 20px;
+}
+
+.scene {
+  width: 860px;
+  max-width: 96vw;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 30px;
+  border-radius: 14px;
+  text-align: left;
+  min-width: 320px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+}
+
+.title {
+  font-size: 56px;
+  margin: 0 0 6px 0;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  margin: 0 0 14px 0;
+  color: #cfe6ff;
+  font-size: 18px;
+}
+
+.desc {
+  color: #9fb9da;
+  margin-bottom: 18px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: linear-gradient(90deg,#3b82f6,#06b6d4);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.visual {
+  width: 420px;
+  max-width: 48%;
+  position: relative;
+}
+
+.astro {
+  width: 220px;
+  height: 220px;
+  animation: float 6s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-18px) rotate(3deg); }
+  100% { transform: translateY(0) rotate(-3deg); }
+}
+
+.stars {
+  position: absolute;
+  inset: 6px 6px auto auto;
+  width: 60%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #fff 0%, #bcdcff 40%, transparent 60%);
+  border-radius: 50%;
+  opacity: 0.95;
+  animation: twinkle 3s linear infinite;
+}
+
+@keyframes twinkle {
+  0% { transform: scale(0.8); opacity: 0.3 }
+  50% { transform: scale(1.4); opacity: 1 }
+  100% { transform: scale(0.8); opacity: 0.3 }
+}
+
+.tether {
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 2;
+}
+
+@media (max-width: 700px) {
+  .scene { flex-direction: column-reverse; gap: 18px; }
+  .visual { max-width: 80%; }
+  .title { font-size: 44px; }
+}
