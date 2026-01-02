@@ -1,14 +1,24 @@
 import { useDispatch, useSelector } from "react-redux"
 import { Outlet, Navigate } from "react-router-dom"
-import { checkAuth } from "../features/authSlice"
+import { checkAuth, logout } from "../features/authSlice"
 import { useEffect } from "react"
 import AccountBlocked from "../pages/AccoutBlocked/AccountBlocked"
+import { toast } from "react-toastify"
 
 export default function ProtectedRouter() {
   const { isAuth, loading } = useSelector((state) => state.auth)
   const {user} = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
+  const handleLogout = async () => {
+    try{
+      await dispatch(logout()).unwrap()
+
+    }
+    catch (err){
+      toast.error(err)
+    }
+  }
   const handelCheckAuth = async () =>{
     try{
      await dispatch(checkAuth()).unwrap()
@@ -31,6 +41,7 @@ export default function ProtectedRouter() {
   }
 //KIỂM TRA TÀI KHOẢN CON HOẠT ĐỘNG KHÔNG
 if (!user || user.status !== "ACTIVE" || user.is_deleted){
+  handleLogout()
   return <AccountBlocked />
 }
   return <Outlet />

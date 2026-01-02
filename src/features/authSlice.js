@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { createSlice } from "@reduxjs/toolkit"
 import { setAccessToken as setAuthTokenLocal, clearAccessToken as clearAuthTokenLocal } from "../services/authTokens"
 import { Navigate } from "react-router-dom"
+import apiFetch from "../services/api/apiFetch"
 
 const baseUrl = import.meta.env.VITE_API_URL
 
@@ -51,6 +52,21 @@ const login = createAsyncThunk('auth/login', async (payload, thunk) => {
         console.log(err.message)
         return thunk.rejectWithValue({error: "Lỗi mạng"})
     }
+})
+
+//LOGOUT ====
+const logout = createAsyncThunk("auth/logout", async (_, thunk)=>{
+    const res = await fetch(`${baseUrl}/api/auth/logout`, {
+        method: "DELETE",
+        credentials: "include"
+    })
+    const data = await res.json()
+
+    if (!res.ok){
+        return thunk.rejectWithValue(data)
+
+    }
+    return data
 })
 // API XÁC THỰC NGƯỜI DÙNG 
 const checkAuth = createAsyncThunk("auth/me", async ( _, thunk) =>{
@@ -117,10 +133,26 @@ const authSlice = createSlice({
             state.loading = false
             try { clearAuthTokenLocal() } catch(e){}
         })
+        // LOGOUT
+        .addCase(logout.pending, (state) => {
+            state.loading = true
+        })
+        .addCase(logout.fulfilled, (state, action) => {
+            state.accessToken = null,
+            state.error = null
+            state.loading = false
+            state.isAuth = false
+        })
+        .addCase(logout.rejected, (state, action)=> {
+            state.accessToken = null
+            state.error = action.payload.error || "LỖI KHI ĐĂNG XUẤT",
+            state.loading = false
+            state.isAuth = false
+        })
     }
 })
 
 
-export {login, checkAuth}
+export {login, checkAuth, logout}
 export default authSlice.reducer
 export const {resetAuthError, setAccessToken} = authSlice.actions

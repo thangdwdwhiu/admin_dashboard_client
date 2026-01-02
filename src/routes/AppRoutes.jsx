@@ -5,6 +5,8 @@ import ProtectedRouter from "./ProtectedRouter";
 import DashBoard from "../pages/DashBoard/DashBoard";
 import Profile from "../pages/Profile/Profile";
 import Support from "../pages/Support/Support";
+import RequireRole from "./RequireRole";
+import ManageUsers from "../pages/ManageUsers/ManageUsers";
 
 export default function AppRoutes() {
 
@@ -12,9 +14,16 @@ export default function AppRoutes() {
             <Routes>
                 <Route path="login" element={<Login />}/>
                 {/* TRANG CẦN BẢO VỆ  */}
-                <Route element={<ProtectedRouter />}>
+                <Route element={<ProtectedRouter/>}>
+                <Route element={<RequireRole  roles={[1,2]} />} >
+                {/* REQUIRE ROLE */}
+
                 <Route path="/" element={<DashBoard />}/>
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/user-management" element={<ManageUsers />} />
+
+                </Route>
+
+                <Route path="/profile" element={<Profile  />} />
                 </Route>
                 <Route path="support" element={<Support />} />
                 <Route path="*" element={<PageNotFound />} />
