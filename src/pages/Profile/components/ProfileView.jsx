@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from '../Profile.module.css'
 import avatar from "../../../assets/avatar.jpg"
+import { getFullUrl } from '../../../utils/getFullUrl'
 const ProfileView = ({profile}) => {
     if (!profile) return null
     console.log(profile);
@@ -11,7 +12,7 @@ const ProfileView = ({profile}) => {
     return (
         <div className={styles.viewCard}>
             <div className={styles.avatarWrap}>
-                <img src={profile.avatar || avatar} alt="avatar" className={styles.avatar} />
+                <img src={getFullUrl(profile.avatar) || avatar} alt="avatar" className={styles.avatar} />
             </div>
             <div className={styles.info}>
                 <h3 className={styles.name}>{profile.full_name || profile.name || '—'}</h3>

@@ -5,14 +5,14 @@ import ProfileView from './components/ProfileView'
 import ProfileEdit from './components/ProfileEdit'
 import styles from './Profile.module.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProfile } from '../../features/userSlice'
+import { getProfile, UpdateProfile } from '../../features/userSlice'
 import { Link } from 'react-router-dom'
-import store from '../../store/store'
+
 
 
 export default function Profile() {
     const dispatch = useDispatch()
-    const { profile, loading, error } = useSelector((state) => state.user.profile)
+    const { profile, loading } = useSelector((state) => state.user.profile)
     const fetchProfile = async () => {
         try {
             await dispatch(getProfile()).unwrap()
@@ -26,12 +26,12 @@ export default function Profile() {
         fetchProfile()
     }, [])
 
-    const handleUpdate = async (payload) => {
+    const handleUpdate = async (formData) => {
         try {
-            await dispatch(updateProfile(payload)).unwrap()
+            await dispatch(UpdateProfile(formData)).unwrap()
             toast.success("Cập nhật thành công")
         } catch (err) {
-            toast.error(err?.message || "Cập nhật thất bại")
+            toast.error(err || "Cập nhật thất bại")
         }
     }
 

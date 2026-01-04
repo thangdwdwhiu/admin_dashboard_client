@@ -14,10 +14,15 @@ const initialState = {
     profile : {
         profile: {},
         loading: false,
-        error: null
+        error: null,
+        update : {
+            loading: false,
+            error: null
+        }
     }
 }
 
+//GET PROFILE
 const getProfile = createAsyncThunk("user/profile", async (_, thunk) => {
     try {
         const res = await apiFetch(`${baseUrl}/api/users/profile`, {
@@ -35,6 +40,28 @@ const getProfile = createAsyncThunk("user/profile", async (_, thunk) => {
         console.log(err)
         return thunk.rejectWithValue("Lỗi mạng")
         
+    }
+})
+
+// UPDATE PROFILE
+
+const UpdateProfile = createAsyncThunk("user/update", async(formData, thunk) => {
+    try {
+        const res = await apiFetch(`${baseUrl}/api/users/profile`, {
+            method: "PATCH",
+            body: formData
+        })
+
+        const data = await res.json()
+        if (!res.ok)
+        {
+            return thunk.rejectWithValue(data.error)
+        }
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return thunk.rejectWithValue("Lỗi mạng")
     }
 })
 const reducers = {
@@ -75,10 +102,23 @@ const userSlice = createSlice({
             state.profile.error = action.payload || action.payload.error
             state.profile.loading = false
         })
+        //UPDATE
+        .addCase(UpdateProfile.pending, (state) => {
+            state.profile.update.loading = true
+        })
+        .addCase(UpdateProfile.fulfilled, (state, action) => {
+            state.profile.profile = action.payload.profile
+            state.profile.update.loading = false
+            state.profile.update.error = null
+        })
+        .addCase(UpdateProfile.rejected, (state, action) => {
+            state.profile.update.loading = false
+            state.profile.update.error = action.payload.error
+        })
     }
 })
 
 
 export default userSlice.reducer
 export const {setUser} = userSlice.actions
-export {getProfile}
+export {getProfile, UpdateProfile}

@@ -1,38 +1,60 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from '../Profile.module.css'
+import { toast } from 'react-toastify'
 
 const ProfileEdit = ({ profile, onUpdate }) => {
     const [fullName, setFullName] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const loading = false
+    const [avatarFile, setAvatarFile] = useState(null)
+    const [avatarPreview, setAvatarPreview] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const fileRef = useRef(null)
 
-    // sync state khi profile load xong
+    // Khi profile load xong, sync state
     useEffect(() => {
-        if (profile) {
-            setFullName(profile.full_name ?? '')
-            setAvatar(profile.avatar ?? '')
-        }
+        if (!profile) return
+        setFullName(profile.full_name || '')
+        setAvatarPreview(profile.avatar || null)
+        setAvatarFile(null) // luôn null lúc đầu
     }, [profile])
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        const payload = {}
-
-        if (fullName !== profile?.full_name) {
-            payload.full_name = fullName
-        }
-
-        if (avatar !== profile?.avatar) {
-            payload.avatar = avatar
-        }
-
-        // không có gì thay đổi → không gọi API
-        if (Object.keys(payload).length === 0) {
+        // Chặn nếu không thay đổi gì
+        if (fullName === profile?.full_name && !avatarFile) {
+            toast.warning("Bạn chưa thay đổi thông tin nào")
             return
         }
 
-        onUpdate(payload)
+        const formData = new FormData()
+        // luôn append fullName nếu có thay đổi
+        if (fullName !== profile?.full_name) {
+            formData.append("full_name", fullName)
+        }
+
+        if (avatarFile instanceof File) {
+            formData.append("avatar", avatarFile)
+        }
+
+        if (![...formData.keys()].length) {
+            alert("Không có dữ liệu để cập nhật")
+            return
+        }
+
+        setLoading(true)
+        onUpdate(formData).finally(() => setLoading(false))
+    }
+
+    const handleSelectImg = () => {
+        fileRef.current?.click()
+    }
+
+    const handleChangeFile = (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        setAvatarFile(file)
+        setAvatarPreview(URL.createObjectURL(file))
     }
 
     return (
@@ -41,16 +63,51 @@ const ProfileEdit = ({ profile, onUpdate }) => {
                 <label>Full name</label>
                 <input
                     value={fullName}
+                    placeholder={profile.full_name}
                     onChange={(e) => setFullName(e.target.value)}
                 />
             </div>
 
             <div className={styles.formGroup}>
-                <label>Avatar URL</label>
+                <label>Avatar</label>
+
                 <input
-                    value={avatar}
-                    onChange={(e) => setAvatar(e.target.value)}
+                    type="file"
+                    accept="image/*"
+                    ref={fileRef}
+                    hidden
+                    onChange={handleChangeFile}
                 />
+
+                {avatarPreview ? (
+                    avatarPreview.startsWith('http') || avatarPreview.startsWith('blob:') ? (
+                        <img
+                            src={avatarPreview}
+                            alt="preview"
+                            className={styles.avatarPreview}
+                            onClick={handleSelectImg}
+                        />
+                    ) : (
+                        <button
+                            type="button"
+                            className={styles.btnSelectImg}
+                            onClick={handleSelectImg}
+                        >
+                            <i className="bi bi-file-earmark-image"></i>
+                            Chọn ảnh
+                        </button>
+                    )
+                ) : (
+                    <button
+                        type="button"
+                        className={styles.btnSelectImg}
+                        onClick={handleSelectImg}
+                    >
+                        <i className="bi bi-file-earmark-image"></i>
+                        Chọn ảnh
+                    </button>
+                )}
+
             </div>
 
             <div className={styles.actions}>
