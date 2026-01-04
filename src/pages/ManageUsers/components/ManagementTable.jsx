@@ -47,7 +47,16 @@ const Row = ({ user }) => {
   const isAdmin = useSelector(
     (state) => state.user.user?.role_id === 1
   )
-
+  const roleColor = {
+    ADMIN: "bg-danger",
+    MANAGER: "bg-warning",
+    USER: "bg-primary"
+  }
+  const statusColor = {
+    ACTIVE: "bg-success",
+    INACTIVE: "bg-warning",
+    BLOCKED: "bg-danger"
+  }
   const dispatch = useDispatch()
 
   const [showFormUpdate, setShowFormUpdate] = useState(false)
@@ -60,9 +69,10 @@ const Row = ({ user }) => {
     if (!confirm(`Xác nhận xóa người dùng "${full_name}" ?`)) return
     setDeleting(true)
     try {
-      await dispatch(deleteUser(id)).unwrap()
+      const res = await dispatch(deleteUser(id)).unwrap()
+      toast.success(res.message || "Xóa thành công ")
     } catch (err) {
-      alert(err?.message || "Lỗi xóa user")
+      toast.error(err.error || "có lỗi xảy ra khi xóa ")
     } finally {
       setDeleting(false)
     }
@@ -110,11 +120,12 @@ const Row = ({ user }) => {
 
     setUpdating(true)
     try {
-      await dispatch(updateUser({ id, payload })).unwrap()
+      const res = await dispatch(updateUser({ id, payload })).unwrap()
+      toast.success(res.message || "Cập nhập thành công" )
       setShowFormUpdate(false)
       setFormUpdate({})
     } catch (err) {
-      alert(err?.message || "Lỗi cập nhật user")
+      toast.warning(err ?? "Không thể thực hiện thao tác với tài khoản ngang quyền hạn")
     } finally {
       setUpdating(false)
     }
@@ -163,7 +174,7 @@ const Row = ({ user }) => {
             <option value="ADMIN">ADMIN</option>
           </select>
         ) : (
-          <span className="badge bg-primary">{role_name}</span>
+          <span className={`badge ${roleColor[role_name]}`}>{role_name}</span>
         )}
       </td>
 
@@ -182,7 +193,7 @@ const Row = ({ user }) => {
         ) : (
           <span
             className={`badge ${
-              status === "ACTIVE" ? "bg-success" : "bg-danger"
+              statusColor[status]
             }`}
           >
             {status}

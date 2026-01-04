@@ -1,0 +1,26 @@
+.container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.viewCard {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.06);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.avatarWrap { width: 96px; height: 96px; }
+.avatar { width: 96px; height: 96px; border-radius: 999px; object-fit: cover; }
+.info { display: flex; flex-direction: column; }
+.name { margin: 0; font-size: 18px; }
+.role { margin: 4px 0 0; color: #64748b; font-size: 13px }
+.email { margin: 6px 0 0; color: #94a3b8; font-size: 13px }
+.editForm { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 8px 24px rgba(2,6,23,0.04); padding: 10px; }
+.formGroup { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.formGroup label { font-size: 13px; color: #374151 }
+.formGroup input { padding: 8px 10px; border-radius: 6px; border: 1px solid #e6e9ef }
+.actions { display: flex; justify-content: flex-end; }

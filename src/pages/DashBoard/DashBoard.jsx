@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import PageNotFound from '../PageNotFound/PageNotFound'
-import { Users, UserCheck, UserX, PieChart as PieIcon } from 'lucide-react'
+import { Users, UserCheck, UserX, User, PieChart as PieIcon } from 'lucide-react'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { getStats } from '../../features/statsSlice'
 import { toast } from 'react-toastify'
@@ -45,13 +45,24 @@ export default function DashBoard() {
         <div className="p-4" style={{ minHeight: '70vh' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0, textShadow: "1px 5px gray"}}>DASHBOARD</h1>
-                <button
-                    onClick={() => navigate('/user-management')}
-                    className="btn btn-primary btn-sm"
-                    style={{ borderRadius: 8, padding: '8px 12px', boxShadow: '0 6px 18px rgba(2,6,23,0.08)' }}
-                >
-                    Quản lý người dùng
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <button
+                        onClick={() => navigate('/profile')}
+                        className="btn btn-light btn-sm"
+                        style={{ borderRadius: 8, padding: '8px 10px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 6px 18px rgba(2,6,23,0.04)' }}
+                    >
+                        <User size={16} />
+                        Hồ sơ
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/user-management')}
+                        className="btn btn-primary btn-sm"
+                        style={{ borderRadius: 8, padding: '8px 12px', boxShadow: '0 6px 18px rgba(2,6,23,0.08)' }}
+                    >
+                        Quản lý người dùng
+                    </button>
+                </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 20 }}>

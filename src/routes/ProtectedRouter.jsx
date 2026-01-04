@@ -40,7 +40,8 @@ export default function ProtectedRouter() {
     return <Navigate to="/login" replace />
   }
 //KIỂM TRA TÀI KHOẢN CON HOẠT ĐỘNG KHÔNG
-if (!user || user.status !== "ACTIVE" || user.is_deleted){
+
+if (user && (user.status !== "ACTIVE" || user.is_deleted)) {
   handleLogout()
   return <AccountBlocked />
 }

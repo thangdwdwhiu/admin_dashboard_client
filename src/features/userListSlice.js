@@ -82,7 +82,7 @@ export const updateUser = createAsyncThunk(
       const data = await res.json()
 
       if (!res.ok) {
-        return thunkAPI.rejectWithValue(data)
+        return thunkAPI.rejectWithValue(data.error)
       }
 
       return data
