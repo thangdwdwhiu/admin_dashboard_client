@@ -26,9 +26,7 @@ export default async function apiFetch(path, opts = {}) {
 
   const headers = new Headers(options.headers || {});
 
-  // **Xử lý body**:
-  // - Nếu body là FormData -> KHÔNG set Content-Type, fetch tự set
-  // - Nếu body là JS object -> set JSON
+// xu li body + headers
   if (options.body && !(options.body instanceof FormData) && typeof options.body === 'object') {
     if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
     options.body = JSON.stringify(options.body);
@@ -39,18 +37,18 @@ export default async function apiFetch(path, opts = {}) {
   if (access) headers.set('Authorization', `Bearer ${access}`);
   options.headers = headers;
 
-  // 1️⃣ Call lần đầu
+  // goi lan dau
   let res = await fetch(url, options);
   if (res.status !== 401) return res;
 
-  // 2️⃣ Nếu 401, thử refresh token 1 lần
+// thu refresh lan 1
   const fresh = await refreshOnce();
   if (!fresh) {
     setAccessToken(null);
     throw { message: 'Unauthorized', code: 'UNAUTHORIZED' };
   }
 
-  // 3️⃣ Retry với token mới
+ // thu lai voi token moi
   headers.set('Authorization', `Bearer ${fresh}`);
   options.headers = headers;
   res = await fetch(url, options);

@@ -12,9 +12,6 @@ const ProfileEdit = ({ profile, onUpdate }) => {
     // Khi profile load xong, sync state
     useEffect(() => {
         if (!profile) return
-        setFullName(profile.full_name || '')
-        setAvatarPreview(profile.avatar || null)
-        setAvatarFile(null) // luôn null lúc đầu
     }, [profile])
 
     const handleSubmit = (e) => {
