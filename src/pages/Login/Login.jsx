@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styles from "./Login.module.css"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import { login } from "../../features/authSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
+import { getDeviceInfo } from "../../utils/getDeviceInfo"
 
 export default function Login() {
   const [showPw, setShowPw] = useState(false)
@@ -11,16 +12,24 @@ export default function Login() {
   const [errors, setErrors] = useState({})
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { isAuth } = useSelector((state) => state.auth)
+
+  // ✅ Redirect nếu đã login
+
+  useEffect(() => {
+      console.log(getDeviceInfo());
+      
+  }, [])
+  if (isAuth) return <Navigate to="/profile" replace />
 
   const handleChangeEye = () => setShowPw(!showPw)
 
   const handleChangeInput = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
-    setErrors((prev) => ({ ...prev, [name]: "" })) 
+    setErrors((prev) => ({ ...prev, [name]: "" })) // reset lỗi khi user gõ
   }
 
-  // ========================= validate frontend
   const validateForm = () => {
     const errs = {}
 
@@ -47,7 +56,8 @@ export default function Login() {
     if (!validateForm()) return
 
     try {
-      const payload = await dispatch(login(form)).unwrap()
+      const device = getDeviceInfo()
+      const payload = await dispatch(login({...form,device: device})).unwrap()
       toast.success(payload.message || "Đăng nhập thành công...")
       if (payload.user.role_id === 3) navigate("/profile")
       else navigate("/")

@@ -7,6 +7,8 @@ import styles from './Profile.module.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { getProfile, UpdateProfile } from '../../features/userSlice'
 import { Link } from 'react-router-dom'
+import { logout } from '../../features/authSlice'
+import ProfileDevices from './components/ProfileDevices'
 
 
 
@@ -34,6 +36,18 @@ export default function Profile() {
             toast.error(err || "Cập nhật thất bại")
         }
     }
+    //logout
+    const handleLogout = async () => {
+        try {
+            await dispatch(logout()).unwrap()
+        }
+        catch (err)
+        {
+            console.log(err);
+            
+            toast.error("Có lỗi xảy ra khi đăng xuất")
+        }
+    }
 
 
     if (loading) return <div className="w-100 h-100 d-flex align-items-center justify-content-center"><Loading text="Đang tải thông tin" /></div>
@@ -45,7 +59,10 @@ export default function Profile() {
 
             <div className={styles.container}>
                 <div>
-                    <ProfileView profile={profile} />
+                    <ProfileView profile={profile} onLogout={handleLogout}/>
+                    <div className={styles.editForm} style={{ padding: "10px", marginTop: "10px" }}>
+                        <ProfileDevices />
+                    </div>
                 </div>
 
                 <div>
@@ -53,6 +70,7 @@ export default function Profile() {
                         <h3 style={{ margin: '0 0 12px' }}>Chỉnh sửa thông tin</h3>
                         <p style={{ marginTop: 0, color: '#6b7280', fontSize: 13 }}>Bạn không thể thay đổi email hoặc vai trò từ đây.</p>
                         <ProfileEdit profile={profile} onUpdate={handleUpdate} />
+
                     </div>
                 </div>
             </div>

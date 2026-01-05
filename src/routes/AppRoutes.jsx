@@ -17,15 +17,14 @@ export default function AppRoutes() {
                 <Route element={<ProtectedRouter/>}>
                 <Route element={<RequireRole  roles={[1,2]} />} >
                 {/* REQUIRE ROLE */}
-
                 <Route path="/" element={<DashBoard />}/>
                 <Route path="/user-management" element={<ManageUsers />} />
-
                 </Route>
 
                 <Route path="/profile" element={<Profile  />} />
                 </Route>
                 <Route path="support" element={<Support />} />
+                <Route path="/404" element={<PageNotFound />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
     </>)

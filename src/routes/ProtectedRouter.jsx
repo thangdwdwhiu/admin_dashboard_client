@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from "react-redux"
 import { Outlet, Navigate } from "react-router-dom"
-import { checkAuth, logout } from "../features/authSlice"
-import { useEffect } from "react"
 import AccountBlocked from "../pages/AccoutBlocked/AccountBlocked"
 import { toast } from "react-toastify"
+import { logout } from "../features/authSlice"
 
 export default function ProtectedRouter() {
   const { isAuth, loading } = useSelector((state) => state.auth)
@@ -19,19 +18,7 @@ export default function ProtectedRouter() {
       toast.error(err)
     }
   }
-  const handelCheckAuth = async () =>{
-    try{
-     await dispatch(checkAuth()).unwrap()
-    }
-    catch(err) {
-      console.log(err)
-      return <Navigate to={"/login"} replace/>
 
-    }
-  }
-  useEffect(() =>{
-    handelCheckAuth()
-  }, [])
   if (loading) {
     return <div>Loading... 🔃</div>
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../Profile.module.css'
 import avatar from "../../../assets/avatar.jpg"
 import { getFullUrl } from '../../../utils/getFullUrl'
-const ProfileView = ({profile}) => {
+const ProfileView = ({profile, onLogout}) => {
     if (!profile) return null
     console.log(profile);
     
@@ -18,7 +18,7 @@ const ProfileView = ({profile}) => {
                 <h3 className={styles.name}>{profile.full_name || profile.name || '—'}</h3>
                 <p className={styles.role}>{profile.role_name || 'User'} : {profile.description}</p>
                 <p className={styles.email}>{profile.email}</p>
-                
+                <button onClick={onLogout} className='btn btn-danger w-75'>Đăng xuất</button>
             </div>
         </div>
     )

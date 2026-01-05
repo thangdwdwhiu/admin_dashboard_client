@@ -18,10 +18,6 @@ export default function DashBoard() {
     const navigate = useNavigate()
 
     useEffect(() => {
-       
-        if (!user || user.role_id === 3) {
-            return
-        }
 
         const fetchStats = async () => {
                 dispatch(getStats())
@@ -32,8 +28,6 @@ export default function DashBoard() {
             toast.error(error)
         }
     }, [user])
-
-    if (!user || user.role_id === 3) return <PageNotFound />
 
     if (loading) return (
         <div className="w-100 h-100 d-flex align-items-center justify-content-center">

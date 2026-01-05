@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { getAccessToken, setAccessToken } from '../authTokens';
 
 const baseUrl = import.meta.env.VITE_API_URL || '';
@@ -9,6 +10,7 @@ async function refreshOnce() {
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
     });
+
     if (!r.ok) return null;
 
     const data = await r.json();
@@ -26,42 +28,79 @@ export default async function apiFetch(path, opts = {}) {
 
   const headers = new Headers(options.headers || {});
 
-// xu li body + headers
-  if (options.body && !(options.body instanceof FormData) && typeof options.body === 'object') {
-    if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  // xử lý body
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    typeof options.body === 'object'
+  ) {
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
     options.body = JSON.stringify(options.body);
   }
 
-  // set Authorization nếu có token
+  // gắn access token
   const access = getAccessToken();
   if (access) headers.set('Authorization', `Bearer ${access}`);
   options.headers = headers;
 
-  // goi lan dau
+  // ===== CALL LẦN 1 =====
   let res = await fetch(url, options);
   if (res.status !== 401) return res;
 
-// thu refresh lan 1
+  // ===== ĐỌC BODY LỖI =====
+  let errorData = null;
+  try {
+    errorData = await res.clone().json();
+  } catch {}
+
+  const errorCode = errorData?.code;
+
+  // 🚨 SESSION / DEVICE BỊ REVOKE → LOGOUT NGAY
+  if (errorCode === 'SESSION_REVOKED') {
+    setAccessToken(null);
+    await fetch(`${baseUrl}/api/auth/logout`, {
+        method: "DELETE",
+        credentials: "include"
+    })
+    window.location.href = "/login"
+    toast.warning("Phiên đăng nhập hết hạn")
+    throw errorData;
+  }
+
+  // ❌ TOKEN KHÔNG HỢP LỆ → LOGOUT
+  if (errorCode === 'UNAUTHORIZED') {
+    setAccessToken(null);
+    window.location.href = '/login';
+    throw errorData;
+  }
+
+  // ===== CHỈ REFRESH KHI TOKEN HẾT HẠN =====
   const fresh = await refreshOnce();
   if (!fresh) {
     setAccessToken(null);
-    throw { message: 'Unauthorized', code: 'UNAUTHORIZED' };
+    window.location.href = '/login';
+    throw { message: 'Refresh failed', code: 'REFRESH_TOKEN_INVALID' };
   }
 
- // thu lai voi token moi
+  // ===== CALL LẠI VỚI TOKEN MỚI =====
   headers.set('Authorization', `Bearer ${fresh}`);
   options.headers = headers;
+
   res = await fetch(url, options);
   if (res.status === 401) {
     setAccessToken(null);
+    window.location.href = '/login';
     throw { message: 'Unauthorized', code: 'UNAUTHORIZED' };
   }
 
   return res;
 }
 
-// Helpers login/logout
+// ===== Helpers =====
 export const saveTokens = ({ accessToken }) => {
   if (accessToken) setAccessToken(accessToken);
 };
+
 export const clearTokens = () => setAccessToken(null);

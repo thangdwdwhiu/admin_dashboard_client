@@ -11,7 +11,11 @@ const initialState = {
     isAuth: false,
     accessToken: null,
     loading: true,
-    error: null
+    error: null,
+    changePassword : {
+        loading: false,
+        error: null
+    }
 }
 
 // REDUCERS
@@ -91,7 +95,25 @@ const checkAuth = createAsyncThunk("auth/me", async ( _, thunk) =>{
 })
 
 
+// CHANGE PASSWORD
 
+const changePassword = createAsyncThunk("auth/change-password", async (payload,thunk) => {
+
+        const res = await apiFetch(`${baseUrl}/api/auth/change-password`, {
+            method: "PUT",
+            body: JSON.stringify(payload),
+              headers: {
+    "Content-Type": "application/json"
+  },
+        })
+        const data = await res.json()
+        if (!res.ok) {
+            return thunk.rejectWithValue({error: data.error})
+        }
+        return data
+    }
+
+)
 // TAO AUTH SLICE
 const authSlice = createSlice({
     name: 'auth',
@@ -149,10 +171,21 @@ const authSlice = createSlice({
             state.loading = false
             state.isAuth = false
         })
+        //CHANGE PASSWORD
+        .addCase(changePassword.pending, (state) => {
+            state.changePassword.loading = true
+        })
+        .addCase(changePassword.fulfilled, (state) => {
+            state.changePassword.loading =false
+        })
+        .addCase(changePassword.rejected, (state, action) => {
+            state.changePassword.loading = false
+            state.changePassword.error = action.payload.error
+        })
     }
 })
 
 
-export {login, checkAuth, logout}
+export {login, checkAuth, logout, changePassword}
 export default authSlice.reducer
 export const {resetAuthError, setAccessToken} = authSlice.actions
