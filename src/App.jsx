@@ -4,6 +4,8 @@ import AppRoutes from './routes/AppRoutes'
 import { useDispatch } from 'react-redux'
 import { checkAuth } from './features/authSlice'
 
+import SocketListener from './components/socket/SocketListener'
+
 function App() {
     const dispatch = useDispatch()
     const handelCheckAuth = async () =>{
@@ -16,11 +18,14 @@ function App() {
   
       }
     }
+    // useSocketAuth()
     useEffect(() =>{
+
       handelCheckAuth()
     }, [])
   return (
     <>
+          <SocketListener />
           <AppRoutes />
     </>
   )
