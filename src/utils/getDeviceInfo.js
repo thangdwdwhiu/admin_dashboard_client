@@ -60,6 +60,7 @@ function parseOS(ua) {
 function parseDeviceName(ua, platform) {
   const browser = parseBrowser(ua);
   const os = parseOS(ua);
-
+  console.log(platform);
+  
   return `${browser} on ${os}`;
 }

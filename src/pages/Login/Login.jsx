@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import styles from "./Login.module.css"
+import styles from "./login.module.css"
 import { Link, Navigate, useNavigate } from "react-router-dom"
 import { login } from "../../features/authSlice"
 import { useDispatch, useSelector } from "react-redux"
@@ -107,7 +107,7 @@ export default function Login() {
 
           <Link to="/forget_password">Quên mật khẩu ?</Link>
           <button type="submit" className="btn btn-primary w-25 m-auto">
-            Đăng nhập
+            Login
           </button>
         </form>
       </div>
