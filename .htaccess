@@ -1,9 +1,9 @@
 RewriteEngine On
 RewriteBase /
 
-# Nếu file hoặc thư mục không tồn tại
+# Nếu request không phải file hoặc folder
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Thì redirect về index.html
-RewriteRule . /index.html [L]
+# Redirect về index.html
+RewriteRule ^ index.html [L]
